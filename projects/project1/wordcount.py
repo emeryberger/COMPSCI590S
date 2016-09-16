@@ -19,9 +19,18 @@ for filename in sys.argv[1:]:
         count = wordcount.get(word, 0)
         # Increment it.
         wordcount[word] = count + 1
-    file.close();
+    file.close()
 
-# Sort in reverse order by frequency.
-for pair in sorted(wordcount.iteritems(), key=operator.itemgetter(1), reverse = True):
-    print ("%s : %s" %(pair[0] , pair[1]))
+# Build a list of words for each count.
+revwordcount = {}  # revwordcount: count -> [word]
+for pair in wordcount.iteritems():
+    if not pair[1] in revwordcount:
+        revwordcount[pair[1]] = []
+    revwordcount[pair[1]].append(pair[0])
+
+# Sort the counts in reverse order.
+for pair in sorted(revwordcount.iteritems(), key=lambda s: s[0], reverse = True):
+    # Print word and count, with words sorted in alphabetical order.
+    for v in sorted(pair[1]):
+        print ("%s : %s" %(pair[0] , v))
                           
