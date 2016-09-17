@@ -194,7 +194,9 @@ One way is to keep a reference count: keep track of the count of objects that ha
 
 Another technique is to use Recursive Marking. That is a graph traversal of white/black marking of objects to see if there are any pointers. If white, remove, if black, then keep.
 
-The amount of memory you use is a fraction of the total memory because the other portion is used by garbage collector. Works like real life garbage.  You wouldn’t go to dump every time u wanna throw one rapper, you wait till cans are full, then you go once.
+The amount of memory you use is a fraction of the total memory because the other
+portion is used by garbage collector. Works like real life garbage.  You
+wouldn’t go to dump every time you want to throw away one wrapper. Instead you wait till cans are full, then you go once.
 
 Increasing performance of garbage collecting is a skill in and of itself. You can use a profiler to figure out how much memory you need to get it faster. If fast enough, then you are good. If not, then you have to dig into performance issues and use a variety of techniques to improve the garbage collecting. Performance of program depends on disk, RAM, what kind of data, etc. You cannot tell performance analytically, can only tell empirically.
 
