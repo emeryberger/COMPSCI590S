@@ -119,7 +119,7 @@ Three main types of graph systems are focused:
 
 \section{Graph Computation and Search}
 In graph computation you are given an input graph and you want to compute some updates on it. Page
-Rank is the traditional problem in graph Computation. It is used by Google for page raking websites. In this
+Rank is the traditional problem in graph Computation. It is used by Google for page ranking websites. In this
 case web pages are the vertices and hyper links are the edges of the graph. We can represent this as 
 an adjacency matrix where a cell encodes an edge, indices encode a vertex and computation is done by iteratively
 transforming the matrix such that on termination, each vertex corresponds to a ranking.
@@ -179,7 +179,7 @@ While Pregel's parallelism is achieved within each "superstep" and "supersteps" 
 the time a "superstep" takes to complete is equivalent to the slowest vertex being processed. This means if one worker has lot more work to be done than other workers, the rest will have to wait - i.e we have a straggler. Similarly, if a few vertices is of higher degree than many others, we get a potentially network bottleneck or what is referred to as a hotspot. In fact, it turns out a lot of graphs in the real world are of this type:  the top 1 percent vertices are adjacent to 53 percent of the edges. They will create bottlenecks due to communication messages, storage, speed etc.
 
 \section{Power graph}
-Identify the hotsopts and replicate those high degree vertices. They use the idea of Gather, Apply and Scatter operation. These operation help in solving fan in problems. 
+Identify the hotspots and replicate those high degree vertices. They use the idea of Gather, Apply and Scatter operation. These operation help in solving fan in problems. 
 
 \section{Graph Mining} 
 In graph mining we try to find the patterns of interests based on some properties. e.g. finding cliques in a graph - a subgraph where every vertex has an edge to every other vertex, motif counting - finding all subgraphs or embeddings that display connected patterns with induced-vertices, and and frequent sub-graph mining - counting subgraphs that are isomorphic to each other. 
