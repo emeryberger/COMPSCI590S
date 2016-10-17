@@ -116,7 +116,7 @@ Next project/assignment requires coding web sockets in Java.
 \section{Review of row-based databases v/s column based databases}
 
 \begin{itemize}
-\item Row-based Databases:In a row-based database, rows are stored across the files in a distributed system or in a single file other wise. Advantages of this is adding a new row requires hashing(and searching) and then appending/inserting new row is faster as compared in a column-based database(of similar schema and size).
+\item Row-based Databases:In a row-based database, rows are stored across the files in a distributed system or in a single file other wise. Advantages of this is adding a new row requires hashing (and searching) and then appending/inserting new row is faster as compared in a column-based database (of similar schema and size).
 
 \item Column-based Databases: In a column-based data base, columns of database are stored as different files. So, when a new row needs to be added, (hashing and searching are required here as well) multiple I/O's are required as each field in row is added to the respective column, increasing the disk seek.
 
@@ -165,13 +165,13 @@ In aligned loads/stores, when a variable/address is loaded or stored the memory 
 
 \item External fragmentation: Total memory space is enough to allocate memory for a requested variable, but the available memory is not contiguous because of this memory allocation cannot be completed. This is referred to {\bf external fragmentation}
 
-\item Compaction saves/extract the free spaces between aligned memory allocation. This feature is available in Java(JVM) and is because of its garbage collection, which collects the unused memory periodically.
+\item Compaction saves/extract the free spaces between aligned memory allocation. This feature is available in Java (JVM) and is because of its garbage collection, which collects the unused memory periodically.
 
 \end{itemize}
 
-\section{Metadata overhead(book keeping) in Linux}
+\section{Metadata overhead (book keeping) in Linux}
 
-In Linux, initial bits of a memory allocation for a pointer stores the size of the pointer/variable(metadata of the pointer). This metadata is the overhead incurred in linux for storing the pointer.
+In Linux, initial bits of a memory allocation for a pointer stores the size of the pointer/variable (metadata of the pointer). This metadata is the overhead incurred in linux for storing the pointer.
 
 \section{Memory allocation in Java v/s C/C++}
 
