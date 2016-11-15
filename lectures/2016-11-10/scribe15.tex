@@ -1,0 +1,144 @@
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+  \pagestyle{myheadings}
+  \thispagestyle{plain}
+  \newpage
+  \setcounter{lecnum}{#1}
+  \setcounter{page}{1}
+  \noindent
+  \begin{center}
+  \framebox{
+     \vbox{\vspace{2mm}
+   \hbox to 6.28in { {\bf COMPSCI~590S~~~Systems for Data Science
+                       \hfill Fall 2016} }
+      \vspace{4mm}
+      \hbox to 6.28in { {\Large \hfill Lecture #15: #2  \hfill} }
+      \vspace{2mm}
+      \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe(s): #4} }
+     \vspace{2mm}}
+  }
+  \end{center}
+  \markboth{Lecture {#15}: #2}{Lecture {#1}: #2}
+  \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+           \vspace{0.2 in}
+           \setlength{\epsfxsize}{#2}
+           \centerline{\epsfbox{#4}}
+           \begin{center}
+           Figure \thelecnum.#1:~#3
+           \end{center}
+   }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+ \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+     \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\llap{$##$}\tabskip\z@skip\crcr
+   #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+   #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{1}{Making Sense of Performance in Data Analytics Frameworks}{Emery Berger}{Matt McNally, Yasaman Ahrabi}
+
+\section{Response to Paper}
+Previously, people thought that the main problems with data analytics frameworks were I/O and stragglers, but that wasn’t the case in this paper.  The paper asserts that those bottlenecks were not the real problem.
+
+
+Spark was designed to avoid I/O, so when the authors of the paper tested how much faster I/O would help, it naturally wasn’t impactful, since that I/O had already been avoided.
+
+\section{Threats to validity of paper}
+Are the paper’s results generalizable? In order for the result of the paper to generalizable, there needs to be a large, diverse sample.  The first piece of that is to have a large sample size.  This paper only had one, Spark, which isn’t enough.  The second piece is to avoid sample bias, which requires a representative sample.  The paper should have used several popular data analytics frameworks, but it instead used only one. The third piece is to have workloads that are representative of real usage.  The paper had one real workload, the trace, which was not sufficient. The paper should have also characterized the workloads that follow the hypothesis. 
+
+\section{Question about Warmup}
+\subsection{Bytecode}
+When Java is “compiled”, it is really just converted into java bytecode.  Since Spark uses Scala and Scala uses the JVM, it has a similar process.  Java bytecode is 20X - 100X slower than machine code.  When Java runs bytecode, it runs one instruction at a time by going through a massive switch statement.
+
+Python is a completely interpreted language.  Python can “compile” to something like Python bytecode, which produces .pyc files, which is still interpreted.  This is why Python is so slow.
+
+\subsection{JIT Compiler}
+“Just in Time” compiler compiled “hot” methods, which are frequently used.  There is a warmup period where methods need to get hot so that they get compiled. 
+
+\section{Side note about references in Java}
+A Strong reference is the normal reference in Java.
+
+
+A Soft reference is reference to an object that the garbage collector can collect at any time.  This could be used as a cache, but it can be completely wiped at any time, so really isn’t a good option. Can be fixed with prioritized soft references that are introduced in a new paper.  The prioritized soft references can be used to implement LRU caching.
+
+
+Weak references are soft references that survive the first garbage collection cycle.
+
+
+Phantom references are references that don’t count as a reference when garbage collection counts references pointing to objects.  It is used when dealing with finalization, which is essentially Java’s version of C++ destructors.  Objects with phantom references aren’t deleted until the very end of a round a garbage collection, which means that finalizers that run during garbage collection can use phantom references to point to objects that are also be garbage collected, and it will work.
+
+
+\end{document}
