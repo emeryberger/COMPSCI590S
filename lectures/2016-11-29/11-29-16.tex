@@ -108,7 +108,7 @@
 
 %FILL IN THE RIGHT INFO.
 %\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
-\lecture{1}{Memory Allocation}{Emery Berger}{Udit Saxena,Freddie Sanchez}
+\lecture{18}{Distributed Shared Memory}{Emery Berger}{Udit Saxena,Freddie Sanchez}
 
 \section{Continuation of discussion on Grappa }
 
@@ -127,6 +127,7 @@ We discussed the concept of 'Work Stealing' and the difference from Work Stealin
 \end{enumerate}
 \item Work Stealing is more fine grained when looking at degree of load balancing control.
 \item Only the processes with "no work" are doing the load balancing work. 
+\item Asking another worker if they have work, doesn?t create an interruption in the system. 
 \end{enumerate}
 
 \item Work Sharing : 
@@ -138,7 +139,8 @@ We discussed the concept of 'Work Stealing' and the difference from Work Stealin
 \item Min-first
 \end{enumerate}
 \item Work Sharing is coarse grained when looking at degree of load balancing control. 
-\item Everyone needs to be asked for their load. 
+\item Creates a bottleneck since it needs to check everyone loads. Everyone needs to be asked for their load. 
+\item Everyone is asking if the other workers need work.
 \item When workers are asking/answering to a query for their load, they aren't doing meaningful work - this situation gets worse when everyone is asking everyone for their work. \\
 But to prevent the issue of stopping working when asking/being asked, we the concept of lock-free data structures.
 \end{enumerate}
@@ -151,16 +153,17 @@ The process scheduling framework can be thought of as a scheduling - deschedulin
 There are two kinds of scheduling: 
 \begin{enumerate}
 \item: Preemptive Scheduling: Every process gets a time quantum (~5ms). On the expiration of this time slice, the process is context-switched out, and another process is allowed to continue computation. \\
-This kind of scheduling is good for preventing malicious processes from taking an arbitrarily long computation time. \\
+This kind of scheduling is good for preventing malicious processes from taking an arbitrarily long computation time. Used in aggressive programming it can also help avoid infinite loops.\\
 The problem with this kind of scheduling is: 
 \begin{enumerate}
-\item High scheduling overhead with lower granularity
+\item High scheduling overhead with lower granularity - bad for context switches for workloads which are large.
 \item Lock Convoying
-\item Warm up or collateral damage or frequent cache flushing.
+\item Warm up or collateral damage or frequent cache flushing - the TLB is flushed every time it is switched.
+\item Can also kick out a program at awkward stages, such as when one has a lock.
 \end{enumerate} 
-\item: Cooperative Scheduling: In Cooperative scheduling, a process is allowed to continue processing until it explicitly yields the CPU for another process to continue. The onus is on the process to hand over the CPU - if it doesn't, it can keep processing for as long as it wants. This is used in environments which are considered safe and have no malicious processes.
+\item Cooperative Scheduling: In Cooperative scheduling, a process is allowed to continue processing until it explicitly yields the CPU for another process to continue. The onus is on the process to hand over the CPU - if it doesn't, it can keep processing for as long as it wants. This is used in environments which are considered safe and have no malicious processes.
 \end{enumerate}
-
+Some systems have EDF (earliest deadline first) scheduling between processes. The CPU has deadlines to schedule programs.
 \section{Page based DSM}
 Page based DSM refers to the Distributed Shared Memory at the level of a page which is the smallest unit of memory being shared across the distributed system. There are two kinds: 
 \begin{enumerate}
