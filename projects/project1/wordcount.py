@@ -22,6 +22,9 @@ for filename in sys.argv[1:]:
     file.close();
 
 # Sort in reverse order by frequency.
-for pair in sorted(wordcount.iteritems(), key=operator.itemgetter(1), reverse = True):
+sort1 = sorted(wordcount.iteritems(), key=operator.itemgetter(0))
+sort2 = sorted(sort1, key=operator.itemgetter(1), reverse = True)
+
+for pair in sort2:
     print ("%s : %s" %(pair[0] , pair[1]))
                           
