@@ -116,7 +116,7 @@
 In the previous lecture locks were discussed in depth but there are a couple of points that were left out of the discussion: 
 
 \begin{itemize}
-\item  \textbf{Two Phase Locking (2PL)}  is the idea that you adquire all locks then you release all them at once. This guarantees atomicity. When dealing with deadlocks, there are two main approaches optimistic and pessimistic. The first one hopes for the "best", no deadlocks will occur while the latter one assumes the worst case scenario which is that a deadlock is bound to occur therefore to avoid it you adquire all locks. 
+\item  \textbf{Two Phase Locking (2PL)}  is the idea that you acquire all locks then you release all them at once. This guarantees atomicity. When dealing with deadlocks, there are two main approaches optimistic and pessimistic. The first one hopes for the "best", no deadlocks will occur while the latter one assumes the worst case scenario which is that a deadlock is bound to occur therefore to avoid it you acquire all locks. 
 
 \item  \textbf{Avoiding deadlocks}
  If there is a cycle in locking graph, this is known as deadlock. One of the typical solutions for this is \textbf{canonical lock ordering} which means that you acquire the locks in increasing order, e.g. $lock_1$, $lock_2$, $lock_3$ and release then in decreasing order. This ensures that no cycles are form and hence is deadlock-free. 
@@ -158,7 +158,7 @@ Despite C++ being a lower level abstraction that has the potential for better pe
 Java & C/C++ \\
 \hline \\
 JIT Compilation & AOT Compilation \\ 
-Indices access memory & Direct access to memory (possibly unsafe)\\
+Indirect access to memory & Direct access to memory (possibly unsafe)\\
 Bounds checks & Explicit memory management\\
 No explicit access to memory & \\
 Code executes on write and read & \\
@@ -181,7 +181,7 @@ This is the approach used by the JVM to compile Java bytecode to machine instruc
 
 Ahead-of-Time. Eager. Designed for good throughput and low latency.
 
-This type of compilation is not possible in Java because Java is a dynamic language. In particular, Java supports things like class loaders, reflections, and the $eval$ function. All of these things make AOT compilation impossible for Java.
+This type of compilation is not possible in Java because Java is a dynamic language. In particular, Java supports things like class loaders and reflections which make AOT compilation impossible.
 
 \includegraphics[width=\textwidth]{compilers.png}
 
