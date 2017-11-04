@@ -149,7 +149,7 @@ For more complex operations, sorting the file on a particular field could be use
 
 \subsection{Databases}
 There are row and column store databases. Databases operate in an ACID fashion (Atomicity, Consistency, Isolation, Durability) via transactions. Prior to SQL (Structured Query Language) was QUEL, which became SEQUEL, then SQL. SQL is a declarative language. This means that the programmer states what they want done, and behind the scenes the interpreter determines the step(s) to complete the task(s).
-An example database with an imperative program instead of a declaritive query.\\
+An example database with an imperative program instead of a declarative query.\\
 \begin{tabular}{c|c|c}
 Income & Name & Age\\
 \hline
@@ -170,7 +170,7 @@ for( , it!db.end(); it++)
     }
 \end{lstlisting}
 
-A query in a declaritive language will have a much different set of steps. For a query such as an insert, one might use a binary search to locate the correct location to insert a new record based on a given index or set of indices. This index could be represented as a B-tree. The result of these differences is that for tasks commonly done with a declaritive language like SQL, the imperative version of that program is much harder to write in a performative manner. Imperative languages can't hide details like index creation. C\# and link use SQL-like code in an imperative language to avoid the problems of imperative code.\\
+A query in a declarative language will have a much different set of steps. For a query such as an insert, one might use a binary search to locate the correct location to insert a new record based on a given index or set of indices. This index could be represented as a B-tree. The result of these differences is that for tasks commonly done with a declarative language like SQL, the imperative version of that program is much harder to write in a performative manner. Imperative languages can't hide details like index creation. C\# and link use SQL-like code in an imperative language to avoid the problems of imperative code.\\
 There is a standard for SQL, but each vendor has its own dialect of SQL. A SQL query will be of the general form:\\
 \begin{lstlisting}
 SELECT...
@@ -199,7 +199,7 @@ Indices can index any field in a DBMS. They can speed up accessing data in table
 Using balanced binary trees like red black trees for indexing is good, it still maintains a logarithmic look up time. Using a red black tree or any balanced tree has two problems - space consumption and locality of data. All the data is on a disk, and we want to access the disk as rarely as possible. As there is almost no locality of data with balanced binary trees, we are forced to access the disk often. 
 Magnetic disks provide the bulk of secondary storage for modern computer systems. Conceptually, disks are relatively simple. Each disk platter has a flat circular shape, like a CD. The reads are usually spread all over which leads to latency in reads. The positioning time, or random-access time, consists of two parts: the time necessary to move the disk arm to the desired cylinder, called the seek time, and the time necessary for the desired sector to rotate to the disk head, called the rotational latency. Typical disks can transfer several megabytes of data per second, and they have seek times and rotational latency of several milliseconds. So using a simple balanced binary tree does not work. 
 
-$B^+ trees$ are a good alternative to balanced binary trees. The advantage of $B^+tree$ in  indexing includes automatically reorganizes itself with small, local, changes, in the face of insertions and deletions and reorganization of entire file is not required to maintain performance. However a minor disadvantage of $B^+ trees$ could be the extra insertion and deletion overhead, space overhead. But the advantages greatly outweigh the disadvantages and $B^+ trees$ are extensively used. 
+$B trees$ are a good alternative to balanced binary trees. Apart from the self balancing factor, we have huge gains due to the fact that it stores multiple keys per node. This reduces the number of disk accesses from $O(\log_2n)$ to $O(\log_{numKeys}n)$. A related data structure is the $B^+ trees$ in which all internal nodes have only keys. All values are stored in the leaves and are linked together like a linked list. 
 
  \includegraphics[scale = 0.60]{btree-6.png}
  
