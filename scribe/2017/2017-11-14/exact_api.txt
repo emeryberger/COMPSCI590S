@@ -1,0 +1,7 @@
+increment(){
+  count++;
+}
+
+getValue(){
+  return count;
+}
