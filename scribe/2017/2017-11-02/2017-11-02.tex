@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 
+
 %
 % The following commands sets up the lecnum (lecture number)
 % counter and make various numbering schemes work relative
@@ -126,10 +127,39 @@ There is also the pigeonhole principle, which states that if a HashMap has M obj
 
 In addition to this we know that the expected length of the traversal is E$[\frac{M}{N}]$, where M is the number of objects, and N is the number of bins.
 
+In addition, there are concurrent HashMaps, which allow for concurrent access by using locks.
+
+There are implementations that use a singular global lock, and implementations that lock every single key with a lock, as well as implementations inbetween that form buckets and have a lock for each bucket.
+
+Java Objects all have hashCodes via the hashCode() method derived from the Object class.
+
 \section{Distributed Hash Tables}
 
 The idea behind distributed hash tables is that the key-value pairs can be distributed onto multiple machines, to store particularly large hash tables.
 
 \section{Chord}
 
+A problem with distributed hash tables is that once they get sufficiently large, if you have to split a bucket, you will have to rehash all the values in the hash table, which is an extremely expensive operation for sufficiently large data sets. 
+
+The Chord paper describes an algorithm for adding new nodes without having to rehash the values on every single machine.
+
+\begin{center}
+\includegraphics{chord_new_node.png}
+\end{center}
+
+In the diagram above we see that we were able to add a new node C into the chord system, and the only node that will have to be rehashed in the image above is B. This means that for each insertion of a new node, the number of rehashes is O(1), and not O(n), which would be computationally intractable for large key-value stores.
+
+\begin{center}
+\includegraphics{chord_virtual_nodes.png}
+\end{center}
+
+In between nodes in Chord, there exist virtual nodes, which point to an actual node. The purpose of these virtual nodes is to distribute load across the system. In the example above, we see a chord system with 3 actual nodes (A, B, C), and the virtual nodes for those three nodes are distributed evenly throughout the system like the image above. 
+
+\nocite{*}
+\bibliographystyle{unsrt} 
+\bibliography{ref}
+
+
 \end{document}
+
+
