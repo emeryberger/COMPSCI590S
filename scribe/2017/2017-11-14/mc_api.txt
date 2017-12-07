@@ -1,0 +1,5 @@
+increment(){
+  p = 1/count;
+  with prob p:
+     count = 2*count;
+}

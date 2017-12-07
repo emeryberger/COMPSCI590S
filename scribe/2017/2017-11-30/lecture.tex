@@ -1,0 +1,191 @@
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+  \pagestyle{myheadings}
+  \thispagestyle{plain}
+  \newpage
+  \setcounter{lecnum}{#1}
+  \setcounter{page}{1}
+  \noindent
+  \begin{center}
+  \framebox{
+     \vbox{\vspace{2mm}
+   \hbox to 6.28in { {\bf COMPSCI~590S~~~Systems for Data Science
+                       \hfill Fall 2017} }
+      \vspace{4mm}
+      \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+      \vspace{2mm}
+      \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe(s): #4} }
+     \vspace{2mm}}
+  }
+  \end{center}
+  \markboth{Lecture {#1}: #2}{Lecture {#1}: #2}
+  \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+           \vspace{0.2 in}
+           \setlength{\epsfxsize}{#2}
+           \centerline{\epsfbox{#4}}
+           \begin{center}
+           Figure \thelecnum.#1:~#3
+           \end{center}
+   }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+ \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+     \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\llap{$##$}\tabskip\z@skip\crcr
+   #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+   #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{17}{Distributed Shared Memory}{Emery Berger}{Akash Mantry, Mohanish Panchal}
+
+In this lecture, we first discussed the challenges with multi-processing and then proceeded to discussion of Distributed Shared Memory systems.
+
+\section{Challenges with Multiple Processing}
+
+Multiple processing includes loads of challenges. Due to different address spaces, concurrency becomes a problem. A message passing infrastructure is needed for communicating state. Passing messages is expensive and may result in non-deterministic delivery. If speed is one of the requirements, synchronous message passing becomes a bottleneck.\newline
+
+Debugging is also a challenge. The only way to debug is to do logging. There are multiple stacks, heaps, threads, etc. to keep track of and due to lack of a global view, it becomes hard to find and ascribe bugs.\newline
+
+Some of other requirements of multiple processing which are hard to implement include:
+\begin{itemize}
+    \item Discovery mechanism (at the start)
+    \item Dynamic partitioning of heap
+    \item Load balancing
+    \item Fault-tolerance (synchronous checkpoints)
+\end{itemize}
+
+\section{Distributed Shared Memory}
+
+A distributed shared memory (DSM) is a form of memory architecture where physically separated memories can be addressed as one logically shared address space. Here, shared implies that the address space is shared.
+
+\subsection{Addressing in shared memory system}
+
+Distributed memory system works with machine local addressing.
+Suppose if a program asks for the value of
+a variable $x$ (say), the system has to figure out if the variable is mapped to
+current machine or is somewhere else. In first case, it will be a simple memory
+read. In second, it has to be a network message that fetches the data from a
+remote machine. \newline
+
+But, there are some problems with this naive approach.
+\begin{itemize}
+    \item Synchrony - This can be avoided by having many threads and thus we can hide latency by switching to other threads.
+    \item Concurrency - Locks provide exclusive access to a shared memory but the lock itself is in shared memory. This forms a kind of recursive problem and can be avoided by using a separate locking service.
+\end{itemize}
+
+\subsection{TreadMarks}
+
+TreadMarks is a distributed shared memory system whose design focuses on reducing the amount of communication necessary to maintain memory consistency. If a resource is not present locally, the node raises a segmentation fault and cues a signal handler to handle the network messages. Messages are also sent in batches to improve performance.\newline
+
+Lazy release consistency provides further improvement by sending updates only when the lock is released.\newline
+
+Some of the issues with TreadMark were: 
+\begin{itemize}
+    \item It only worked well with structures which had contiguous memory accesses like matrices but failed with graphs.
+    \item Though, batching reduced network communication, it was still slow.
+\end{itemize}
+
+\section{Grappa}
+\subsection{Insights of the Grappa System}
+Grappa is a DSM system implemented in C++ which does not require spatial locality or data reuse to perform well. The idea is to have local memory and partitioned global memory. The code has free access to local memory but has to request for accessing global memory.\newline
+
+Some of the features of Grappa include:
+\begin{itemize}
+    \item Grappa doesn't include fault tolerance. The reason being most of the jobs don't take long. 
+    \item InfiniBand is a  an architecture and specification which features low latency
+high bandwidth It is widely used in high end servers.
+   \item RDMA, Remote Direct Memory Access, is a direct memory access from the memory of
+one computer into that of another without through either one's kernel. It
+provides high-throughput and low-latency. It avoids context switches by having no system calls.
+\end{itemize}
+
+
+\subsection{Delegation}
+This concept of completing work on the local machine rather than remotely doing the work. It is based on the principle that local memory access is way cheaper than remote memory access. It achieves this by sending the lambda (code) instead of the data.
+
+\subsection{Work Stealing}
+\begin{itemize}
+\item Proactively go and "steal" work from an overloaded fellow worker. 
+\item It is used for load imbalance correction. There can be different strategies - 
+\begin{itemize}
+\item Randomly choosing a victim and then decide how much work to take. 
+\item "Half Stealing" - steal half the work of the chosen victim.
+\item "The power of two choices" - between two choices, we pick the victim as the one with more work.
+\end{itemize}
+\item Work Stealing is more fine grained when looking at degree of load balancing control.
+\item Only the processes with "no work" are doing the load balancing work. 
+\end{itemize}
+
+\end{document}
