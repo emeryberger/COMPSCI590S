@@ -110,26 +110,26 @@
 
 %FILL IN THE RIGHT INFO.
 %\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
-\lecture{13: Probabilistic data structures}{November 7}{Emery Berger}{Ananya Ganesh, Nikhil George Titus}
+\lecture{13}{November 7}{Emery Berger}{Ananya Ganesh, Nikhil George Titus}
 
 \section{Bloom Filters}
 Bloom filters are data structures that can handle a large number or items efficiently in less space. Bloom filters can represent n elements in a set with m bits where m << n. They answer inexact set membership queries in the following way:
 \begin{verbatim}
 ADD(item, S)
 ISMEMBER(x,S)
-	if x $\in$ S then report TRUE
-	but may also return MAYBE
+  if x $\in$ S then report TRUE
+  but may also return MAYBE
 \end{verbatim}
 That is, it might return true positives as well as false positives, but will never return false negatives.
 \subsection{1-bit Bloom filters}
 This is a simple implementation where the filter has one bit b which can be 0 or 1. A function h(x) returns 0 if x is even and 1 if x is odd. When an element is added through ADD(x,S), b is set to h(x). When a membership query ISMEMBER(x,S) is made, the filter returns MAYBE if h(x) OR b is 1, where b is the old bit.
 \par For example, let the bit b initially be 0. The following queries are made:
 \begin{verbatim}
-	ADD(20, S)
-	ADD(40, S)
-	ISMEMBER(20, S) --- returns MAYBE, true positive
-	ISMEMBER(60, S) --- returns MAYBE, false positive
-	ISMEMBER(51, S) --- returns NO, true negative.
+  ADD(20, S)
+  ADD(40, S)
+  ISMEMBER(20, S) --- returns MAYBE, true positive
+  ISMEMBER(60, S) --- returns MAYBE, false positive
+  ISMEMBER(51, S) --- returns NO, true negative.
 \end{verbatim}
 \subsection{16-bit Bloom filters}
 The hash function is defined as h(x)=x\%16. So for the query ADD(51, S), bit 3 if flipped to 1. Similarly, ADD(40, S) flips bit 8 and ADD(20, S) flips bit 4. Now, ISMEMBER(17) returns false as bit 1 is 0, but ISMEMBER(35) returns MAYBE, which is a false positive.
