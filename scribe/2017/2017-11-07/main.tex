@@ -1,0 +1,190 @@
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+  \pagestyle{myheadings}
+  \thispagestyle{plain}
+  \newpage
+  \setcounter{lecnum}{#1}
+  \setcounter{page}{1}
+  \noindent
+  \begin{center}
+  \framebox{
+     \vbox{\vspace{2mm}
+   \hbox to 6.28in { {\bf CMPSCI~590s~~~Systems for Data Science
+                       \hfill Fall 2017} }
+      \vspace{4mm}
+      \hbox to 6.28in { {\Large \hfill Lecture #1  \hfill} }
+%       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+      \vspace{2mm}
+      \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe: #4} }
+     \vspace{2mm}}
+  }
+  \end{center}
+  \markboth{Lecture #1: #2}{Lecture #1: #2}
+  \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+           \vspace{0.2 in}
+           \setlength{\epsfxsize}{#2}
+           \centerline{\epsfbox{#4}}
+           \begin{center}
+           Figure \thelecnum.#1:~#3
+           \end{center}
+   }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+ \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+     \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\llap{$##$}\tabskip\z@skip\crcr
+   #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+   #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{13: Probabilistic data structures}{November 7}{Emery Berger}{Ananya Ganesh, Nikhil George Titus}
+
+\section{Bloom Filters}
+Bloom filters are data structures that can handle a large number or items efficiently in less space. Bloom filters can represent n elements in a set with m bits where m << n. They answer inexact set membership queries in the following way:
+\begin{verbatim}
+ADD(item, S)
+ISMEMBER(x,S)
+	if x $\in$ S then report TRUE
+	but may also return MAYBE
+\end{verbatim}
+That is, it might return true positives as well as false positives, but will never return false negatives.
+\subsection{1-bit Bloom filters}
+This is a simple implementation where the filter has one bit b which can be 0 or 1. A function h(x) returns 0 if x is even and 1 if x is odd. When an element is added through ADD(x,S), b is set to h(x). When a membership query ISMEMBER(x,S) is made, the filter returns MAYBE if h(x) OR b is 1, where b is the old bit.
+\par For example, let the bit b initially be 0. The following queries are made:
+\begin{verbatim}
+	ADD(20, S)
+	ADD(40, S)
+	ISMEMBER(20, S) --- returns MAYBE, true positive
+	ISMEMBER(60, S) --- returns MAYBE, false positive
+	ISMEMBER(51, S) --- returns NO, true negative.
+\end{verbatim}
+\subsection{16-bit Bloom filters}
+The hash function is defined as h(x)=x\%16. So for the query ADD(51, S), bit 3 if flipped to 1. Similarly, ADD(40, S) flips bit 8 and ADD(20, S) flips bit 4. Now, ISMEMBER(17) returns false as bit 1 is 0, but ISMEMBER(35) returns MAYBE, which is a false positive.
+\par
+However, these provide good performance in practice, as with k good hash functions, the false positive rate is only $(1 - e^{-kn/m})^k$. With 2 hash functions and a 1000 elements, this is a rate of 0.1\%.
+\subsection{Variations}
+Bloom filters do well with insertions and lookups, but can't handle deletions very well. One strategy is to use Counting bloom filters, which consists of n bit counts instead of a single bit. The count is incremented whenever an element is added and decremented when an element is deleted (covered with an example in the next lecture). 
+
+\par
+Another related problem is answering set cardinality queries: finding how many items of a particular type exist in a set, like counting the number of unique visitors to a website. This is utilized in applications such as click fraud detection.
+
+
+\section{Hyperloglog}
+\subsection{Introduction}
+\par
+Hyperloglog is a probabilistic data structure that is used to determine the cardinality of a set. We sacrifice some accuracy for reduced storage. It is used in big data systems like Redis. The cardinality of a set is denoted by $ |S| $.
+\par
+We can use hyperloglog to find information like the number of unique visitors to a site. We can also use multiple hyperloglogs to find more complex join queries using set property:
+
+$|A \cap B|=|A|+|B|-|A \cup B|  $
+
+\par
+
+This can be used to answer queries like the number of unique android devices visiting a site. 
+
+\subsection{Probabilistic counting}
+The main idea behind hyperloglog is based on the paper Probabilistic Counting Algorithms for Data Base Applications by Flajolet and Martin. We assume that we have a hash function that uniquely distributed data between 0 to $2^{k-1}$. 
+\par
+Now, If we begin counting the largest sequence of  0 bits at the start of the hashed value. We can observe the following:
+\begin{itemize}
+\item The probability of getting a 0 in the first place is 1/2.
+\item The probability of getting 00 in the first place is 1/4. 
+\item Similarly if we see a sequence of k zeros we can assume that we have seen $2^k$ elements. 
+\end{itemize}
+\subsection{LogLog and HyperLogLog improvements}
+
+We can observe that the above approach has high variance and this can be further improved. Hyperloglog uses bucketing where the initial bits of the hash function is used to choose a bucket and the other bits to count the number of leading zeros. Then the count across all the buckets is averaged. This will give us k and we can conclude that there are $2^k$ elements. 
+\par
+
+Further improvements to hyperloglog was made by throwing out 30\% of buckets with larger values and averaging out the remaining 70\% of the buckets. The error was reduced to $1.04/ \sqrt{m} $, where m is the number of buckets. 
+
+
+\section{Mongo DB}
+Mongo DB is a NoSQL database which is fast. It sacrifices consistency guarantees to achieve high speeds. It keeps data in memory. Mongo DB uses JSON to define schemas. Example of JSON:
+\begin{lstlisting}
+{"key":"value","key2":{"key":"value"}}
+\end{lstlisting}
+\par
+MongoDB uses binary encoded format of JSON called BSON. It also inserts unique ids to JSON fields to make searching possible. We can say that MongoDB is collection oriented. 
+\par
+Sample API: 
+If we have an entity called posts. We can insert using:
+posts.insert(),posts.insertMany(). 
+\par
+Mongo DB is partially lazy in loading data and it scales well. 
+\end{document}
+
+
