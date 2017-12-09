@@ -114,15 +114,20 @@
 
 \section{Bloom Filters}
 Bloom filters are data structures that can handle a large number or items efficiently in less space. Bloom filters can represent n elements in a set with m bits where m << n. They answer inexact set membership queries in the following way:
-\begin{verbatim}
+
+\begin{lstlisting}[
+  mathescape,
+  columns=fullflexible,
+  basicstyle=\fontfamily{lmvtt}\selectfont,
+]
 ADD(item, S)
 ISMEMBER(x,S)
-  if x $\in$ S then report TRUE
+  if  $x \in S$  then report TRUE
   but may also return MAYBE
-\end{verbatim}
+\end{lstlisting}
 That is, it might return true positives as well as false positives, but will never return false negatives.
 \subsection{1-bit Bloom filters}
-This is a simple implementation where the filter has one bit b which can be 0 or 1. A function h(x) returns 0 if x is even and 1 if x is odd. When an element is added through ADD(x,S), b is set to h(x). When a membership query ISMEMBER(x,S) is made, the filter returns MAYBE if h(x) OR b is 1, where b is the old bit.
+This is a simple implementation where the filter has one bit b which can be 0 or 1. A function h(x) returns 0 if x is even and 1 if x is odd. When an element is added through ADD(x,S), b is set to h(x) or b. When a membership query ISMEMBER(x,S) is made, the filter returns MAYBE if the bits are the same.
 \par For example, let the bit b initially be 0. The following queries are made:
 \begin{verbatim}
   ADD(20, S)
