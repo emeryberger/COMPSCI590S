@@ -109,7 +109,7 @@
 
 %FILL IN THE RIGHT INFO.
 %\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
-\lecture{12}{Hashing, Distributed Hash Tables, and Chord}{Emery Berger}{Samuel Ginzburg}
+\lecture{12}{Hashing, Distributed Hash Tables, and Chord}{Emery Berger}{Samuel Ginzburg, Abhishek Kumar}
 
 \section{Quick Overview of HashTables}
 
@@ -129,13 +129,17 @@ In addition to this we know that the expected length of the traversal is E$[\fra
 
 In addition, there are concurrent HashMaps, which allow for concurrent access by using locks.
 
-There are implementations that use a singular global lock, and implementations that lock every single key with a lock, as well as implementations inbetween that form buckets and have a lock for each bucket.
+There are implementations that use a singular global lock, and implementations that lock every single key with a lock, as well as implementations inbetween that form buckets and have a lock for each bucket. This use of more number of locks reduces contention.
 
-Java Objects all have hashCodes via the hashCode() method derived from the Object class.
+Java Objects all have hashCodes via the hashCode() method derived from the Object class. Hashes find use in data deduplication and fingerprinting \big(If two hashes are not equal, the corresponding objects must be different.\big). 
+
+What would be a better hashing method for images out of a\big) XORing all the pixels or b\big) Adding all the pixels ? It seems that using sum won't be a good idea as Central limit theorem states that  in most situations, when independent random variables are added, their properly normalized sum tends toward a Normal distribution \big(informally a "bell curve"\big) even if the original variables themselves are not normally distributed.
 
 \section{Distributed Hash Tables}
 
-The idea behind distributed hash tables is that the key-value pairs can be distributed onto multiple machines, to store particularly large hash tables.
+The idea behind distributed hash tables is that the key-value pairs can be distributed onto multiple machines, to store particularly large hash tables. Apart from supporting large number of keys, it should also be fault tolerant.
+
+One idea is to use $Hash\big(key\big) \bmod M$ where M is the number of machine, for distributing keys. But this solves only the large data issue and is not fault tolerant. Machines might die or they might get full. For adding new machine we will have to rehash all the keys again. Chord/Consistent Hashing solves this issue.
 
 \section{Chord}
 
