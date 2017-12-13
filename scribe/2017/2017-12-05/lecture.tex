@@ -1,0 +1,225 @@
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{float}
+\usepackage{hyperref}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+  \pagestyle{myheadings}
+  \thispagestyle{plain}
+  \newpage
+  \setcounter{lecnum}{#1}
+  \setcounter{page}{1}
+  \noindent
+  \begin{center}
+  \framebox{
+     \vbox{\vspace{2mm}
+   \hbox to 6.28in { {\bf COMPSCI~590S~~~Systems for Data Science
+                       \hfill Fall 2017} }
+      \vspace{4mm}
+      \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+      \vspace{2mm}
+      \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe(s): #4} }
+     \vspace{2mm}}
+  }
+  \end{center}
+  \markboth{Lecture {#1}: #2}{Lecture {#1}: #2}
+  \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+           \vspace{0.2 in}
+           \setlength{\epsfxsize}{#2}
+           \centerline{\epsfbox{#4}}
+           \begin{center}
+           Figure \thelecnum.#1:~#3
+           \end{center}
+   }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+ \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+     \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\llap{$##$}\tabskip\z@skip\crcr
+   #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+ \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+   &$\displaystyle{{}##}$\hfil\tabskip\@centering
+   &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+   #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{19}{Hive \& HiveQL}{Emery Berger}{Sarthak Nandi, Mohit Surana}
+
+\vspace{-0.2in}
+
+\section{Precursors to Hive}
+
+\subsection{Why MapReduce/Hadoop?}
+\begin{enumerate}
+\item Abstractions
+\begin{enumerate}
+\item Fault tolerance is ensured and a developer need not clutter their core application logic
+\item "Implicit" parallelism obtained if you are able to follow the MapReduce paradigm while framing your solution
+\item Scaling up (\# of processors) and out (\# of machines) to support more clients and to handle large amounts of data
+\end{enumerate}
+\item Heterogeneous machine configurations* (different RAM, CPU, Disk I/O) are supported and hence you don't need to upgrade all systems at one go 
+\item Schemaless nature allows you to store any form of data (for later processing)
+\end{enumerate}
+* Each unique configuration is referred to as a SKU (Stock Keeping Unit), The number of SKUs are minimized for the purpose of quality control. This way, they can "blame the right people" when things go wrong.
+
+\subsection{Comparing different systems}
+MapReduce provided narrow abstraction but supplanted traditional db. It allows iterative queries which are harder in SQL along with ease of scaling out.
+
+Graph of performance scalability vs abstraction level vs generality summarized as follows:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c|c}
+        Data processing system & Performance Scalability & Abstraction Level & Generality \\ \hline
+        SQL (without UDFs) & low & high & low \\
+        SQL (with UDFs) & low & high & high \\
+        MapReduce & high & low & low \\
+        Redis & high & medium & low \\
+        MongoDB & high & high & low \\
+        BigTable & high & low & low \\
+        Hive & high & high & high
+    \end{tabular}
+    \caption{Comparison of different data processing systems}
+    \label{tab:my_label}
+\end{table}
+
+UDFs greatly increase generality for SQL, as you can even process blobs in UDF. MapReduce has a narrow API, and requires multiple stages for several kinds of operations.
+
+MapReduce focused on high scalability. After MapReduce, newer frameworks are focusing on increasing abstraction level and generality while increasing/preserving scalability.
+
+\clearpage
+
+\section{Hive}
+
+\subsection{Introduction}
+More like SQL, but scalable as it is on top of MapReduce (Hadoop). HiveQL supports DDL to create tables and specify how we want the data to be stored (serialization, partitioning schemes) and DML to support a \textbf{subset of} data manipulation queries that are supported by \textbf{SQL}.
+
+Using Java in UDFs provides stronger integration and coupling with Hadoop and eliminates the need to run external programs on Hadoop using JNI. Similarly, Microsoft earlier had UDF's in C++, now in C\# which is very similar to Java.
+
+\subsection{Code example}
+
+HiveQL allows a user who may not be familiar with the low level details of MapReduce to run queries via a language similar to SQL. The following snippet demonstrates that how a simple SELECT - FROM - WHERE translates to a couple of lines of code:
+
+\texttt{ctx = new HiveContext(); \\
+users = ctx.table("user"); \\
+young = users.where(users("age") < 21); \\
+System.out.println(young.count());}
+
+\subsection{Implementation}
+
+Data in tables is stored in the form of files on HDFS. Tables and keys are represented by directories, partitions are stored as subfolders and the individual rows are stored as buckets in files inside these directories.
+
+/wh/table/ds=20090101/ctry=US
+
+Keeping keys in directory names is a way of getting back locality, and enables distribution. In the example above, all rows for the same dates would be on the same machine, hence providing increased locality. The increased locality would be for some specific queries along certain columns, not along all.
+
+Hive compiles queries in a way similar to FlumeJava using dataflow graphs equivalent to DAGs of MapReduce jobs. Hive also performs optimizations like:
+\begin{enumerate}
+    \item Predicate pushdown (as far as possible) - try to filter first to reduce data size transmitted over the network (eg. query where WHERE section happens and filters data)
+    \item Column pruning - only use columns that we need (eg. query where we use column name instead of *)
+\end{enumerate}
+
+\subsection{Support for sampling}
+
+Hive supports sampling queries which is widely used in big data when approximate answers are acceptable. Concept: look at x\% of total records and multiply the answer by x to get a rough approximation of the actual answer. The data must be random. 95\% of times sampling results in confidence interval with correct number of samples.
+
+E.g. instead of taking average salary of all employees, take salary from every 100th.
+
+Sampling does not work when the actual number of examples satisfying our conditions are too small i.e. the issue of needle in a hay stack. E.g. age 81. Sample needs to have some representation at sampling rate. Sampling also cannot be used when very high accuracy is needed.
+
+\subsection{Advantages}
+
+\begin{enumerate}
+    \item High level declarative language that allows people unfamiliar with the MapReduce abstraction to leverage the scalability of Hadoop
+    \item UDFs (single row) \& UDAFs (over multiple rows) in Java (because it is closely tied to Hadoop which is also in Java)
+    \item Hive supports incoming stream of rows 
+\end{enumerate}
+
+\subsection{Disadvantages}
+
+\begin{enumerate}
+    \item No support for update / delete rows in existing tables
+    \item Is slow as it needs disk I/O as the data is stored on Hadoop
+    \item Only supports a subset of the functionality exposed by SQL
+    \item UDFs and UDAFs are treated as black boxes and hence HiveSQL is unable to optimize them
+\end{enumerate}
+
+Some of these issues are the primary focus of SparkSQL (to be discussed in next class).
+
+\section*{Side notes}
+
+\textbf{Discussion regarding one of the causes of stragglers}
+
+Bad blocks - this can be handled by bad block remapping (adding one level of indirection), extra seek latency for items that we presumed locality (slow decay or death)
+
+\vspace{0.2in}
+
+\textbf{\href{https://github.com/emeryberger/COMPSCI590S/blob/master/lectures/2017/COMPSCI\%20590S\%20Dec\%205\%2C\%202017.pdf}{Link to Prof. Berger's notes for this class}}
+
+\end{document}
