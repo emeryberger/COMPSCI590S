@@ -96,11 +96,11 @@ The concept of neural networks date back to the 1950s, when the perceptron was i
     \item GPUs
 \end{itemize}
 
-Some neural network concepts like Rectified Linear Unit (Max(0, X)), softplus, and softmax are simple mathematical operations from preventing a value in the network propagation from becoming negative. 
+Some neural network concepts like Rectified Linear Unit (Max(0, X)) and softplus are simple mathematical operations from preventing a value in the network propagation from becoming negative. Softmax transforms all the numbers in a vector so they add up to 1.
 
 \section{DistBelief and Tensorflow}
 
-Nowadays, neural networks are increasing in popularity but still take a long time to train. Therefore, it is important to design system architectures that support neural network training and deployment. DistBelief was Google's previous machine learning system that allowed for a neural network model to be trained in parallel on a cluster. Unfortunately, this proved to be cumbersome and inflexible, as it required a computer cluster to both train and deploy.
+Nowadays, neural networks are increasing in popularity but still take a long time to train. Therefore, it is important to design system architectures that support neural network training and deployment. DistBelief was Google's previous machine learning system that allowed for a neural network model to be trained in parallel on a cluster. Parameters were stored within a server that each node in the cluster can access. Unfortunately, this proved to be cumbersome and inflexible, as it required a computer cluster to both train and deploy.
 
 Tensorflow was designed with this in mind (A tensor is an n-dimesional array). As an open-source library, its key feature is that it is flexible enough to handle heterogenous architectures (multicores, clusters, GPUs, Google's TPU) on both the training and deployment sides, unlike DistBelief.
 
